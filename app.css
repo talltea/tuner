@@ -59,7 +59,10 @@ html, body {
   font-size: 14px;
   color: var(--muted);
   margin-top: 2px;
+  transition: color 120ms ease;
 }
+#app.close:not(.locked) .cents { color: var(--warn); }
+#app.locked .cents { color: var(--accent); }
 
 .dial {
   width: 100%;
@@ -109,6 +112,7 @@ html, body {
   gap: 8px;
 }
 .strings button {
+  position: relative;
   appearance: none;
   background: var(--bg-2);
   color: var(--fg);
@@ -122,6 +126,24 @@ html, body {
   align-items: center;
   gap: 0;
   transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+}
+.strings button.tuned::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+.strings button.switched {
+  animation: string-switch 280ms ease-out;
+}
+@keyframes string-switch {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); border-color: var(--accent); }
+  100% { transform: scale(1); }
 }
 .strings button:active { transform: scale(0.97); }
 .strings button .big { font-size: 22px; font-weight: 700; line-height: 1; }

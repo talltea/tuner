@@ -13,7 +13,9 @@ const CLARITY_MIN = 0.92;
 const RMS_MIN = 0.01;
 const SMOOTH_ALPHA = 0.25;
 const LOCK_CENTS = 5;
+const CLOSE_CENTS = 10;
 const LOCK_HOLD_MS = 300;
+const HYSTERESIS_MS = 150;
 const NEEDLE_MAX_DEG = 45;
 const CENTS_RANGE = 50;
 
@@ -30,14 +32,24 @@ const stringBtns = [...stringsNav.querySelectorAll('button')];
 let manualLockIdx = null;
 let smoothedDeg = 0;
 let lockSince = 0;
+let pendingIdx = null;
+let pendingSince = 0;
+let stableDetectedIdx = null;
+const tunedSet = new Set();
 
 stringBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const idx = Number(btn.dataset.string);
     manualLockIdx = manualLockIdx === idx ? null : idx;
-    updateStringButtons(null);
+    updateStringButtons(stableDetectedIdx);
   });
 });
+
+function triggerSwitchAnim(btn) {
+  btn.classList.remove('switched');
+  void btn.offsetWidth;
+  btn.classList.add('switched');
+}
 
 function updateStringButtons(detectedIdx) {
   stringBtns.forEach((btn, i) => {
@@ -109,7 +121,21 @@ async function start() {
       const [hz, clarity] = detector.findPitch(buf, ctx.sampleRate);
       if (hz > 0 && clarity >= CLARITY_MIN && hz >= 60 && hz <= 1200) {
         const detectedIdx = nearestStringIdx(hz);
-        const targetIdx = manualLockIdx ?? detectedIdx;
+        if (detectedIdx !== pendingIdx) {
+          pendingIdx = detectedIdx;
+          pendingSince = now;
+        }
+        if (stableDetectedIdx === null) {
+          stableDetectedIdx = detectedIdx;
+        } else if (pendingIdx !== stableDetectedIdx && now - pendingSince >= HYSTERESIS_MS) {
+          const prev = stableDetectedIdx;
+          stableDetectedIdx = pendingIdx;
+          if (manualLockIdx === null && stableDetectedIdx !== prev) {
+            triggerSwitchAnim(stringBtns[stableDetectedIdx]);
+          }
+        }
+
+        const targetIdx = manualLockIdx ?? stableDetectedIdx;
         const target = STRINGS[targetIdx];
         const cents = 1200 * Math.log2(hz / target.hz);
 
@@ -121,11 +147,19 @@ async function start() {
         hzEl.textContent = hz.toFixed(1);
         centsEl.textContent = (cents >= 0 ? '+' : '') + cents.toFixed(0);
 
-        updateStringButtons(detectedIdx);
+        updateStringButtons(stableDetectedIdx);
+
+        app.classList.toggle('close', Math.abs(cents) <= CLOSE_CENTS);
 
         if (Math.abs(cents) <= LOCK_CENTS) {
           if (lockSince === 0) lockSince = now;
-          if (now - lockSince >= LOCK_HOLD_MS) app.classList.add('locked');
+          if (now - lockSince >= LOCK_HOLD_MS) {
+            app.classList.add('locked');
+            if (!tunedSet.has(targetIdx)) {
+              tunedSet.add(targetIdx);
+              stringBtns[targetIdx].classList.add('tuned');
+            }
+          }
         } else {
           lockSince = 0;
           app.classList.remove('locked');
@@ -136,6 +170,7 @@ async function start() {
     } else {
       lockSince = 0;
       app.classList.remove('locked');
+      app.classList.remove('close');
     }
 
     if (now - lastUpdate > 800) {
