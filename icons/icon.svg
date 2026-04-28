@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2030"/>
+      <stop offset="100%" stop-color="#0e1116"/>
+    </linearGradient>
+    <linearGradient id="fork" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7be4a4"/>
+      <stop offset="100%" stop-color="#48c774"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- tuning fork -->
+  <g fill="none" stroke="url(#fork)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+    <!-- two prongs -->
+    <line x1="186" y1="120" x2="186" y2="288"/>
+    <line x1="326" y1="120" x2="326" y2="288"/>
+    <!-- crossbar -->
+    <line x1="170" y1="288" x2="342" y2="288"/>
+    <!-- stem -->
+    <line x1="256" y1="288" x2="256" y2="392"/>
+  </g>
+  <!-- base -->
+  <circle cx="256" cy="412" r="26" fill="url(#fork)"/>
+</svg>

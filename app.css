@@ -1,0 +1,173 @@
+:root {
+  --bg: #0e1116;
+  --bg-2: #161b22;
+  --fg: #e6edf3;
+  --muted: #8b95a5;
+  --accent: #48c774;
+  --warn: #e5b045;
+  --bad: #e54545;
+  --border: #232a35;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: radial-gradient(ellipse at top, #1a2030 0%, var(--bg) 60%);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#app {
+  min-height: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: max(env(safe-area-inset-top), 24px) 20px max(env(safe-area-inset-bottom), 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.readout {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.4;
+  transition: opacity 200ms ease;
+}
+#app.live .readout { opacity: 1; }
+
+.note {
+  font-size: clamp(64px, 18vw, 96px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.hz {
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.cents {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.dial {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.dial svg {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+}
+
+.dial .glow {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+#app.locked .glow { opacity: 1; }
+
+.dial .ticks { opacity: 0.55; }
+.dial .scale {
+  fill: var(--muted);
+  font-size: 9px;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.needle {
+  transform-origin: 0 0;
+  transform: rotate(0deg);
+  transition: transform 80ms ease-out;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.15));
+}
+.needle line {
+  stroke: var(--fg);
+}
+.needle circle {
+  fill: var(--fg);
+  stroke: var(--bg-2);
+  stroke-width: 2;
+}
+#app.locked .needle line { stroke: var(--accent); }
+#app.locked .needle circle { fill: var(--accent); }
+
+.strings {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+.strings button {
+  appearance: none;
+  background: var(--bg-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 0;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+}
+.strings button:active { transform: scale(0.97); }
+.strings button .big { font-size: 22px; font-weight: 700; line-height: 1; }
+.strings button .oct { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.strings button.detected {
+  border-color: #3a4658;
+}
+.strings button.locked-target {
+  border-color: var(--accent);
+  background: #16261c;
+}
+#app.locked .strings button.detected,
+#app.locked .strings button.locked-target {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(72, 199, 116, 0.25);
+}
+
+.start {
+  appearance: none;
+  background: var(--accent);
+  color: #08160e;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 120ms ease, transform 80ms ease;
+}
+.start:hover { filter: brightness(1.05); }
+.start:active { transform: scale(0.98); }
+#app.live .start { display: none; }
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-align: center;
+}
+#app.live .hint { display: none; }
+
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--bad);
+  text-align: center;
+}

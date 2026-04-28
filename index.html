@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tuner</title>
+<meta name="theme-color" content="#0e1116">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<main id="app" class="idle">
+
+  <header class="readout">
+    <div class="note" id="note">—</div>
+    <div class="hz"><span id="hz">0.0</span> Hz</div>
+    <div class="cents"><span id="cents">0</span> cents</div>
+  </header>
+
+  <section class="dial" aria-label="Tuning meter">
+    <svg viewBox="-110 -110 220 130" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <defs>
+        <linearGradient id="arcGrad" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%"   stop-color="#e54545"/>
+          <stop offset="20%"  stop-color="#e5b045"/>
+          <stop offset="45%"  stop-color="#48c774"/>
+          <stop offset="55%"  stop-color="#48c774"/>
+          <stop offset="80%"  stop-color="#e5b045"/>
+          <stop offset="100%" stop-color="#e54545"/>
+        </linearGradient>
+        <radialGradient id="lockGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%"  stop-color="#48c774" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="#48c774" stop-opacity="0.10"/>
+          <stop offset="100%" stop-color="#48c774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <circle class="glow" cx="0" cy="0" r="100" fill="url(#lockGlow)"/>
+
+      <!-- arc from -45deg to +45deg, radius 90 -->
+      <path d="M -63.64 -63.64 A 90 90 0 0 1 63.64 -63.64"
+            fill="none" stroke="url(#arcGrad)" stroke-width="14" stroke-linecap="round"/>
+
+      <!-- tick marks -->
+      <g class="ticks" stroke="#cfd6e4" stroke-width="1.5">
+        <line x1="0" y1="-78" x2="0" y2="-66"/>
+        <line x1="-39" y1="-67.55" x2="-32.5" y2="-56.29" transform=""/>
+        <line x1="39" y1="-67.55" x2="32.5" y2="-56.29"/>
+        <line x1="-67.55" y1="-39" x2="-56.29" y2="-32.5"/>
+        <line x1="67.55" y1="-39" x2="56.29" y2="-32.5"/>
+      </g>
+
+      <!-- center label markers -->
+      <text x="-78" y="-12" text-anchor="middle" class="scale">-50</text>
+      <text x="0"   y="-86" text-anchor="middle" class="scale">0</text>
+      <text x="78"  y="-12" text-anchor="middle" class="scale">+50</text>
+
+      <!-- needle -->
+      <g id="needle" class="needle">
+        <line x1="0" y1="6" x2="0" y2="-78" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="0" cy="0" r="6"/>
+      </g>
+    </svg>
+  </section>
+
+  <nav class="strings" id="strings" aria-label="Select string">
+    <button data-string="0" type="button"><span class="big">E</span><span class="oct">2</span></button>
+    <button data-string="1" type="button"><span class="big">A</span><span class="oct">2</span></button>
+    <button data-string="2" type="button"><span class="big">D</span><span class="oct">3</span></button>
+    <button data-string="3" type="button"><span class="big">G</span><span class="oct">3</span></button>
+    <button data-string="4" type="button"><span class="big">B</span><span class="oct">3</span></button>
+    <button data-string="5" type="button"><span class="big">E</span><span class="oct">4</span></button>
+  </nav>
+
+  <button id="start" class="start" type="button">Tap to start</button>
+  <p class="hint" id="hint">Tap once to grant microphone access. Auto-detects nearest string; tap a string to lock to it.</p>
+
+</main>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
