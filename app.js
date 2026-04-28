@@ -14,7 +14,7 @@ const RMS_MIN = 0.01;
 const SMOOTH_ALPHA = 0.25;
 const LOCK_CENTS = 5;
 const CLOSE_CENTS = 10;
-const LOCK_HOLD_MS = 300;
+const LOCK_HOLD_MS = 120;
 const HYSTERESIS_MS = 150;
 const NEEDLE_MAX_DEG = 45;
 const CENTS_RANGE = 50;
@@ -28,6 +28,7 @@ const startBtn = document.getElementById('start');
 const hintEl = document.getElementById('hint');
 const stringsNav = document.getElementById('strings');
 const stringBtns = [...stringsNav.querySelectorAll('button')];
+const autoBtn = document.getElementById('autoBtn');
 
 let manualLockIdx = null;
 let smoothedDeg = 0;
@@ -41,8 +42,15 @@ stringBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const idx = Number(btn.dataset.string);
     manualLockIdx = manualLockIdx === idx ? null : idx;
+    autoBtn.hidden = manualLockIdx === null;
     updateStringButtons(stableDetectedIdx);
   });
+});
+
+autoBtn.addEventListener('click', () => {
+  manualLockIdx = null;
+  autoBtn.hidden = true;
+  updateStringButtons(stableDetectedIdx);
 });
 
 function triggerSwitchAnim(btn) {
